@@ -1,0 +1,27 @@
+NtfsFileExtractor Changelog
+
+v4.0.0.2 Added support for extracting from shadow copies. 
+
+v4.0.0.1 Fixed the flag filter to also include 0x04/0x05 (deactivated/active $UsnJrnl). Added support for accessing \\.\PhysicalDriveN, and thus completely removing the requirement of having a mounted volume to extract from. 
+
+v4.0.0.0 Merged together the data recovery tool. Added full native support for reparse points. Option to choose between Active files, deleted files, and All files. Option to choose individual files. Support for image files. Added nice progress bars. 
+
+v3.2 Changes by DDan implmented that fixed slightly wrong data extracted when initialized file size differed from logical filesize. Some other minor things too. 
+
+v3.1 Added generation of some MFT arrays with indexnumber and disk offset, to speed up processing of files with attribute list (for instance fragmented and/or compressed files). 
+
+v3.0 With quite substantial support from DDan, much of the code was reorganized and improved. Most importantly, compression and sparse files are now fully supported. Complete $ATTRIBUTE_LIST is also solved. Full support for ADS's are also added. Plus a lot more that makes the code easier to reuse. 
+
+v1.6 Temporary fix for $MFT record size, now fixed at 1024 bytes (2 sectors) (but must be changed to correct formula later anyway), that caused issues on certain volumes. Also fixed support for unicode names in output. 
+
+Added preliminary/experimental support for extraction of compressed files. 
+
+v1.5 Fixed extraction of resident data. Temporarily forgot that ReadFile on physical disks only handle chunks of data aligned to sector size. 
+
+v1.4 Solved several bugs in the solution that calculated runs. Negative moves where reloved wrongly. And very fragmented files with runs located past record offset 0x1fd was also incorrectly solved. Actually that last fix also fixed decoding of attributes extending over that same offset. Note however that compressed and/or sparse files are not yet supported for extraction. I therefore added a break when trying to extract such a file. 
+
+v1.3 Added a FileSelectFolder function to specify where to save the output. Removed the default ".bin" extension, so that the outputted extension is as given in $MFT. 
+
+v1.2 Large files are now supported, because extraction split chunks in 40 MB each at most. That means the $LogFile or any other large file can be exported fine. Also fixed fragmentation in $MFT itself when attempting raw extract functionality by record number. That means it should now work regardless of size and fragmentation in either $MFT or target file. The extraction now also targets real size as opposed to allocated size, and prevents slack data to be appended. 
+
+v1.1. Tiny error inside the function GetAllRuns() as well as when calling it. Wrong variabel name was used pluss a wrong offset. I believe runs are correctly solved now as my SOFTWARE hive is extractable and mountable. But because $MFT fragmentation is not really working I've temporarily put a hardcoded exit after record 1000, until it's fixed. 
