@@ -1,5 +1,7 @@
 NtfsFileExtractor Changelog
 
+v4.0.0.3: Added support for MFT record size of 4096 bytes.
+
 v4.0.0.2 Added support for extracting from shadow copies. 
 
 v4.0.0.1 Fixed the flag filter to also include 0x04/0x05 (deactivated/active $UsnJrnl). Added support for accessing \\.\PhysicalDriveN, and thus completely removing the requirement of having a mounted volume to extract from. 
@@ -25,3 +27,4 @@ v1.3 Added a FileSelectFolder function to specify where to save the output. Remo
 v1.2 Large files are now supported, because extraction split chunks in 40 MB each at most. That means the $LogFile or any other large file can be exported fine. Also fixed fragmentation in $MFT itself when attempting raw extract functionality by record number. That means it should now work regardless of size and fragmentation in either $MFT or target file. The extraction now also targets real size as opposed to allocated size, and prevents slack data to be appended. 
 
 v1.1. Tiny error inside the function GetAllRuns() as well as when calling it. Wrong variabel name was used pluss a wrong offset. I believe runs are correctly solved now as my SOFTWARE hive is extractable and mountable. But because $MFT fragmentation is not really working I've temporarily put a hardcoded exit after record 1000, until it's fixed. 
+

@@ -1,7 +1,6 @@
 #RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_UseX64=y
-#AutoIt3Wrapper_Res_Fileversion=4.0.0.2
+#AutoIt3Wrapper_Res_Fileversion=4.0.0.3
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
@@ -9,8 +8,11 @@
 #Include <FileConstants.au3>
 #include <permissions.au3>
 
-Local $Version = "v4.0.0.2"
-
+Local $Version = "v4.0.0.3"
+;
+; https://github.com/jschicht
+; http://code.google.com/p/mft2csv/
+;
 ; by Joakim Schicht & Ddan
 ; parts by trancexxx & others
 
@@ -638,19 +640,45 @@ Func _DecodeMFTRecord($record, $FileRef)      ;produces DataQ
 EndFunc
 
 Func _DoFixup($record, $FileRef)		;handles NT and XP style
-   $UpdSeqArrOffset = Dec(_SwapEndian(StringMid($record,11,4)))
-   $UpdSeqArrSize = Dec(_SwapEndian(StringMid($record,15,4)))
-   $UpdSeqArr = StringMid($record,3+($UpdSeqArrOffset*2),$UpdSeqArrSize*2*2)
-   $UpdSeqArrPart0 = StringMid($UpdSeqArr,1,4)
-   $UpdSeqArrPart1 = StringMid($UpdSeqArr,5,4)
-   $UpdSeqArrPart2 = StringMid($UpdSeqArr,9,4)
-   $RecordEnd1 = StringMid($record,1023,4)
-   $RecordEnd2 = StringMid($record,2047,4)
-   If $UpdSeqArrPart0 <> $RecordEnd1 OR $UpdSeqArrPart0 <> $RecordEnd2 Then
-      _DebugOut($FileRef & " The record failed Fixup", $record)
-      Return ""
-   EndIf
-   Return StringMid($record,1,1022) & $UpdSeqArrPart1 & StringMid($record,1027,1020) & $UpdSeqArrPart2
+	$UpdSeqArrOffset = Dec(_SwapEndian(StringMid($record,11,4)))
+	$UpdSeqArrSize = Dec(_SwapEndian(StringMid($record,15,4)))
+	$UpdSeqArr = StringMid($record,3+($UpdSeqArrOffset*2),$UpdSeqArrSize*2*2)
+	If $MFT_Record_Size = 1024 Then
+		$UpdSeqArrPart0 = StringMid($UpdSeqArr,1,4)
+		$UpdSeqArrPart1 = StringMid($UpdSeqArr,5,4)
+		$UpdSeqArrPart2 = StringMid($UpdSeqArr,9,4)
+		$RecordEnd1 = StringMid($record,1023,4)
+		$RecordEnd2 = StringMid($record,2047,4)
+		If $UpdSeqArrPart0 <> $RecordEnd1 OR $UpdSeqArrPart0 <> $RecordEnd2 Then
+			_DebugOut($FileRef & " The record failed Fixup", $record)
+			Return ""
+		EndIf
+		Return StringMid($record,1,1022) & $UpdSeqArrPart1 & StringMid($record,1027,1020) & $UpdSeqArrPart2
+	ElseIf $MFT_Record_Size = 4096 Then
+		$UpdSeqArrPart0 = StringMid($UpdSeqArr,1,4)
+		$UpdSeqArrPart1 = StringMid($UpdSeqArr,5,4)
+		$UpdSeqArrPart2 = StringMid($UpdSeqArr,9,4)
+		$UpdSeqArrPart3 = StringMid($UpdSeqArr,13,4)
+		$UpdSeqArrPart4 = StringMid($UpdSeqArr,17,4)
+		$UpdSeqArrPart5 = StringMid($UpdSeqArr,21,4)
+		$UpdSeqArrPart6 = StringMid($UpdSeqArr,25,4)
+		$UpdSeqArrPart7 = StringMid($UpdSeqArr,29,4)
+		$UpdSeqArrPart8 = StringMid($UpdSeqArr,33,4)
+		$RecordEnd1 = StringMid($record,1023,4)
+		$RecordEnd2 = StringMid($record,2047,4)
+		$RecordEnd3 = StringMid($record,3071,4)
+		$RecordEnd4 = StringMid($record,4095,4)
+		$RecordEnd5 = StringMid($record,5119,4)
+		$RecordEnd6 = StringMid($record,6143,4)
+		$RecordEnd7 = StringMid($record,7167,4)
+		$RecordEnd8 = StringMid($record,8191,4)
+		If $UpdSeqArrPart0 <> $RecordEnd1 OR $UpdSeqArrPart0 <> $RecordEnd2 OR $UpdSeqArrPart0 <> $RecordEnd3 OR $UpdSeqArrPart0 <> $RecordEnd4 OR $UpdSeqArrPart0 <> $RecordEnd5 OR $UpdSeqArrPart0 <> $RecordEnd6 OR $UpdSeqArrPart0 <> $RecordEnd7 OR $UpdSeqArrPart0 <> $RecordEnd8 Then
+			_DebugOut($FileRef & " The record failed Fixup", $record)
+			Return ""
+		Else
+			Return StringMid($record,1,1022) & $UpdSeqArrPart1 & StringMid($record,1027,1020) & $UpdSeqArrPart2 & StringMid($record,2051,1020) & $UpdSeqArrPart3 & StringMid($record,3075,1020) & $UpdSeqArrPart4 & StringMid($record,4099,1020) & $UpdSeqArrPart5 & StringMid($record,5123,1020) & $UpdSeqArrPart6 & StringMid($record,6147,1020) & $UpdSeqArrPart7 & StringMid($record,7171,1020) & $UpdSeqArrPart8
+		EndIf
+	EndIf
 EndFunc
 
 Func _GetAttrListMFTRecord($Pos)
