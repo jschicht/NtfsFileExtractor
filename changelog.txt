@@ -1,5 +1,7 @@
 NtfsFileExtractor Changelog
 
+v4.0.0.5: Fixed bug when $MFT itself contained an $ATTRIBUTE_LIST. Fixed bug with handling records that was split across dataruns. Increased initialization size of array for runs and vcns which caused it to crash with extreme fragmentation. Added more output to the logfile.
+
 v4.0.0.3: Added support for MFT record size of 4096 bytes.
 
 v4.0.0.2 Added support for extracting from shadow copies. 
