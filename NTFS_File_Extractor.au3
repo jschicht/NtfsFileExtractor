@@ -1,6 +1,6 @@
 #RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Res_Fileversion=4.0.0.5
+#AutoIt3Wrapper_Res_Fileversion=4.0.0.6
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
@@ -8,7 +8,7 @@
 #Include <FileConstants.au3>
 #include <permissions.au3>
 #include <array.au3>
-Local $Version = "v4.0.0.5"
+Local $Version = "v4.0.0.6"
 ;
 ; https://github.com/jschicht
 ; http://code.google.com/p/mft2csv/
@@ -539,7 +539,6 @@ Func _DoFileTree()
 				EndIf
 				$Offset += $Size*2
 			WEnd
-
 ;			If Not BitAND($Flags,Dec("0200")) And $PartOfAttrList=0 And $FileTree[$FileRef] <> "" Then $FileTree[$FileRef] &= "?" & ($Pos + $i)     ;file also add FilePointer
 			If Not BitAND($Flags,Dec("0200")) And $PartOfAttrList=0 And $FileTree[$FileRef] <> "" Then $FileTree[$FileRef] &= "?" & ($CurrentOffset[3])     ;file also add FilePointer
 			If StringInStr($FileTree[$FileRef], "**") = 1 Then $FileTree[$FileRef] = StringTrimLeft($FileTree[$FileRef],2)    ;remove leading **
@@ -880,9 +879,11 @@ Func _GetDiskConstants()
 		$MFT_Record_Size = $BytesPerCluster * $ClustersPerFileRecordSegment
 	EndIf
 	$SectorsPerMftRecord = $MFT_Record_Size/$BytesPerSector
+	$ClustersPerFileRecordSegment = Ceiling($MFT_Record_Size/$BytesPerCluster)
 	_DebugOut("LogicalClusterNumberforthefileMFT: " & $LogicalClusterNumberforthefileMFT)
 	_DebugOut("BytesPerCluster: " & $BytesPerCluster)
 	_DebugOut("MFT_Record_Size: " & $MFT_Record_Size)
+	_DebugOut("ClustersPerFileRecordSegment: " & $ClustersPerFileRecordSegment)
 	Return $record
 EndFunc
 
